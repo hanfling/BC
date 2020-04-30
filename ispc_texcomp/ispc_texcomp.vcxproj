@@ -148,8 +148,6 @@
       <ModuleDefinitionFile>ispc_texcomp.def</ModuleDefinitionFile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
-<<<<<<< HEAD
-=======
     <PostBuildEvent>
       <Command>
       </Command>
@@ -173,7 +171,6 @@
       <Command>
       </Command>
     </PostBuildEvent>
->>>>>>> a75d35e... Added avx2 only profile for faster development.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
