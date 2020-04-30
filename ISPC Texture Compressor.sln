@@ -9,6 +9,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
+		ispc_texcomp (avx2 only)|Win32 = ispc_texcomp (avx2 only)|Win32
+		ispc_texcomp (avx2 only)|x64 = ispc_texcomp (avx2 only)|x64
 		Profile|Win32 = Profile|Win32
 		Profile|x64 = Profile|x64
 		Release|Win32 = Release|Win32
@@ -19,6 +21,10 @@ Global
 		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.Debug|Win32.Build.0 = Debug|Win32
 		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.Debug|x64.ActiveCfg = Debug|x64
 		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.Debug|x64.Build.0 = Debug|x64
+		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.ispc_texcomp (avx2 only)|Win32.ActiveCfg = ispc_texcomp (avx2 only)|Win32
+		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.ispc_texcomp (avx2 only)|Win32.Build.0 = ispc_texcomp (avx2 only)|Win32
+		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.ispc_texcomp (avx2 only)|x64.ActiveCfg = ispc_texcomp (avx2 only)|x64
+		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.ispc_texcomp (avx2 only)|x64.Build.0 = ispc_texcomp (avx2 only)|x64
 		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.Profile|Win32.ActiveCfg = Release|Win32
 		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.Profile|x64.ActiveCfg = Release|x64
 		{9B44F7B9-A9AF-45A4-8695-96792A18B052}.Profile|x64.Build.0 = Release|x64
