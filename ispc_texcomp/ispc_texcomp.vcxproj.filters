@@ -17,6 +17,9 @@
     <ClCompile Include="ispc_texcomp_astc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KTexCompBPTC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="kernel.ispc">

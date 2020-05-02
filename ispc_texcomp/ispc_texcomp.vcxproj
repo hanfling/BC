@@ -203,6 +203,7 @@
   <ItemGroup>
     <ClCompile Include="ispc_texcomp.cpp" />
     <ClCompile Include="ispc_texcomp_astc.cpp" />
+    <ClCompile Include="KTexCompBPTC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ispc_texcomp.h" />

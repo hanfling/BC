@@ -30,10 +30,9 @@
 
 struct bc7_enc_settings
 {
-	bool mode_selection[4];
-	int refineIterations[8];
+	bool ModeEnabled[8];
+	int RefineIterations[8];
 
-	bool skip_mode2;
 	int fastSkipTreshold_mode1;
 	int fastSkipTreshold_mode3;
 	int fastSkipTreshold_mode7;
@@ -53,12 +52,12 @@ struct bc7_enc_state
 	uint32 best_data[5];	// 4, +1 margin for skips
 
 	// settings
-	uniform bool mode_selection[4];
-	uniform int refineIterations[8];
+	uniform bool ModeEnabled[8];
+	uniform int RefineIterations[8];
 
-	uniform bool skip_mode2;
 	uniform int fastSkipTreshold_mode1;
 	uniform int fastSkipTreshold_mode3;
+	uniform int fastSkipTreshold_mode13; // max(fastSkipTreshold_mode1,fastSkipTreshold_mode3)
 	uniform int fastSkipTreshold_mode7;
 
 	uniform int mode45_channel0;
@@ -766,8 +765,8 @@ void bc7_enc_mode01237(bc7_enc_state state[], uniform int mode, int part_list[],
 	}
     
 	// refine
-	uniform int refineIterations = state->refineIterations[mode];
-	for (uniform int _=0; _<refineIterations; _++)
+	uniform int RefineIterations = state->RefineIterations[mode];
+	for (uniform int _=0; _<RefineIterations; _++)
 	{
 		float ep[24];
 		for (uniform int j=0; j<pairs; j++)
@@ -792,7 +791,7 @@ void bc7_enc_mode01237(bc7_enc_state state[], uniform int mode, int part_list[],
 		}
 	}
     
-	if (mode != 7)
+	if (mode != 7) // !! This doesn't look right.
 		best_err += state->opaque_err; // take into account alpha channel
 
 	if (best_err<state->best_err)
@@ -802,58 +801,110 @@ void bc7_enc_mode01237(bc7_enc_state state[], uniform int mode, int part_list[],
 	}
 }
 
-void bc7_enc_mode02(bc7_enc_state state[])
-{
-	int part_list[64];
-	for (uniform int part=0; part<64; part++)
-		part_list[part] = part;
+#define BC7_PARTITION_COUNT        64
+#define BC7_PARTITION_COUNT_MODE_0 16
+#define BC7_PARTITION_COUNT_MODE_1 BC7_PARTITION_COUNT
+#define BC7_PARTITION_COUNT_MODE_2 BC7_PARTITION_COUNT
+#define BC7_PARTITION_COUNT_MODE_3 BC7_PARTITION_COUNT
+#define BC7_PARTITION_COUNT_MODE_4 0
+#define BC7_PARTITION_COUNT_MODE_5 0
+#define BC7_PARTITION_COUNT_MODE_6 0
+#define BC7_PARTITION_COUNT_MODE_7 BC7_PARTITION_COUNT
 
-	bc7_enc_mode01237(state, 0, part_list, 16); 
-	if (!state->skip_mode2)
-		bc7_enc_mode01237(state, 2, part_list, 64); // usually not worth the time
+void bc7_enc_mode02( bc7_enc_state State[] )
+{
+	if ( !State->ModeEnabled[0] && !State->ModeEnabled[2] )
+		return;
+
+	//
+	// !! FIX-ME !!
+	//
+	// Why does this even need to be filed manually each time? --han
+	//
+	int PartitionList[BC7_PARTITION_COUNT];
+
+	if ( State->ModeEnabled[0] || State->ModeEnabled[2] )
+	{
+		// Mode 0 only has 16 partions...
+		for ( uniform int Partition=0; Partition<BC7_PARTITION_COUNT_MODE_0; Partition++ )
+			PartitionList[Partition] = Partition;
+
+		// ...but Mode 2 has full 64 partions.
+		if ( State->ModeEnabled[2] )
+			for ( uniform int Partition=BC7_PARTITION_COUNT_MODE_0; Partition<BC7_PARTITION_COUNT_MODE_2; Partition++ )
+				PartitionList[Partition] = Partition;
+	}
+
+	if ( State->ModeEnabled[0] )
+	{
+		// Mode 0 only uses the first 16 partitions.
+		bc7_enc_mode01237( State, 0, PartitionList, BC7_PARTITION_COUNT_MODE_0 ); 
+	}
+
+	// Usually not worth the time.
+	if ( State->ModeEnabled[2] )
+	{
+		bc7_enc_mode01237( State, 2, PartitionList, BC7_PARTITION_COUNT_MODE_2 );
+	}
 }
 
-void bc7_enc_mode13(bc7_enc_state state[])
+void bc7_enc_mode13( bc7_enc_state State[] )
 {
-	if (state->fastSkipTreshold_mode1 == 0 && state->fastSkipTreshold_mode3 == 0)
+	if ( !State->ModeEnabled[1] && !State->ModeEnabled[3] )
 		return;
 
 	float full_stats[15];
-	compute_stats_masked(full_stats, state->block, -1, 3);
+	compute_stats_masked( full_stats, State->block, -1, 3 );
+
+	int PartitionList[BC7_PARTITION_COUNT]; // Full 64 for both Mode 1 and 3.
+	for ( uniform int Partition=0; Partition<BC7_PARTITION_COUNT; Partition++ )
+	{
+		int mask = get_pattern_mask( Partition+0, 0 );
+		float bound12 = block_pca_bound_split( State->block, mask, full_stats, 3 );
+		int bound = (int)(bound12);
+		PartitionList[Partition] = Partition+bound*BC7_PARTITION_COUNT;
+	}
+
+	//
+	// !! FIX-ME !!
+	//
+	// partial_sort_list seems to be O(all*parts) For fastSkipTreshold>4 it may already be faster
+	// to just sort the complete list. In practice this threshold is likely somewhat larger,
+	// but this is probably a worthwhile optimization in particular for the slow profiles. --han
+	//
+	partial_sort_list( PartitionList, 64, State->fastSkipTreshold_mode13 );
+	
+	if ( State->ModeEnabled[1] ) bc7_enc_mode01237( State, 1, PartitionList, State->fastSkipTreshold_mode1 );
+	if ( State->ModeEnabled[3] ) bc7_enc_mode01237( State, 3, PartitionList, State->fastSkipTreshold_mode3 );
+}
+
+void bc7_enc_mode7( bc7_enc_state State[] )
+{
+	if ( !State->ModeEnabled[7] )
+		return;
+
+	float full_stats[15];
+	compute_stats_masked( full_stats, State->block, -1, State->channels );
 
 	int part_list[64];
 	for (uniform int part=0; part<64; part++)
 	{
 		int mask = get_pattern_mask(part+0, 0);
-		float bound12 = block_pca_bound_split(state->block, mask, full_stats, 3);
+		float bound12 = block_pca_bound_split( State->block, mask, full_stats, State->channels );
 		int bound = (int)(bound12);
 		part_list[part] = part+bound*64;
 	}
 
-	partial_sort_list(part_list, 64, max(state->fastSkipTreshold_mode1, state->fastSkipTreshold_mode3));
-	bc7_enc_mode01237(state, 1, part_list, state->fastSkipTreshold_mode1);
-	bc7_enc_mode01237(state, 3, part_list, state->fastSkipTreshold_mode3);
-}
+	//
+	// !! FIX-ME !!
+	//
+	// partial_sort_list seems to be O(all*parts) For fastSkipTreshold>4 it may already be faster
+	// to just sort the complete list. In practice this threshold is likely somewhat larger,
+	// but this is probably a worthwhile optimization in particular for the slow profiles. --han
+	//
+	partial_sort_list( part_list, 64, State->fastSkipTreshold_mode7 );
 
-void bc7_enc_mode7(bc7_enc_state state[])
-{
-	if (state->fastSkipTreshold_mode7 == 0)
-		return;
-
-	float full_stats[15];
-	compute_stats_masked(full_stats, state->block, -1, state->channels);
-
-	int part_list[64];
-	for (uniform int part=0; part<64; part++)
-	{
-		int mask = get_pattern_mask(part+0, 0);
-		float bound12 = block_pca_bound_split(state->block, mask, full_stats, state->channels);
-		int bound = (int)(bound12);
-		part_list[part] = part+bound*64;
-	}
-
-	partial_sort_list(part_list, 64, state->fastSkipTreshold_mode7);
-	bc7_enc_mode01237(state, 7, part_list, state->fastSkipTreshold_mode7);
+	bc7_enc_mode01237( State, 7, part_list, State->fastSkipTreshold_mode7 );
 }
 
 void channel_quant_dequant(int qep[2], float ep[2], uniform int epbits)
@@ -973,8 +1024,8 @@ float opt_channel(bc7_enc_state state[], uint32 qblock[2], int qep[2], float blo
 	float err = channel_opt_quant(qblock, block, bits, ep);
 		
 	// refine
-	uniform const int refineIterations = state->refineIterations_channel;
-	for (uniform int i=0; i<refineIterations; i++)
+	uniform const int RefineIterations = state->refineIterations_channel;
+	for (uniform int i=0; i<RefineIterations; i++)
 	{
 		channel_opt_endpoints(ep, block, bits, qblock);
 		channel_quant_dequant(qep, ep, epbits);
@@ -984,7 +1035,7 @@ float opt_channel(bc7_enc_state state[], uint32 qblock[2], int qep[2], float blo
 	return err;
 }
 
-void bc7_enc_mode45_candidate(bc7_enc_state state[], mode45_parameters best_candidate[], float best_err[], uniform int mode, uniform int rotation, uniform int swap)
+void bc7_enc_mode45_candidate(bc7_enc_state state[], mode45_parameters best_candidate[], float best_err[], uniform int mode, uniform int rotation, uniform int doswap)
 {
 	uniform int bits = 2; 
 	uniform int abits = 2;
@@ -993,7 +1044,7 @@ void bc7_enc_mode45_candidate(bc7_enc_state state[], mode45_parameters best_cand
 	uniform int aepbits = 8;
 	if (mode==4)
 		aepbits = 6;
-	if (swap==1) // (mode 4)
+	if (doswap==1) // (mode 4)
 	{
 		bits = 3;
 		abits = 2;
@@ -1025,8 +1076,8 @@ void bc7_enc_mode45_candidate(bc7_enc_state state[], mode45_parameters best_cand
 	float err = block_quant(qblock, block, bits, ep, 0, 3);
 	
 	// refine
-	uniform int refineIterations = state->refineIterations[mode];
-	for (uniform int i=0; i<refineIterations; i++)
+	uniform int RefineIterations = state->RefineIterations[mode];
+	for (uniform int i=0; i<RefineIterations; i++)
 	{
 		opt_endpoints(ep, block, bits, qblock, -1, 3);
 		ep_quant_dequant(qep, ep, mode, 3);
@@ -1045,72 +1096,85 @@ void bc7_enc_mode45_candidate(bc7_enc_state state[], mode45_parameters best_cand
 		swap_ints(best_candidate->aqep, aqep, 2);
 		swap_uints(best_candidate->aqblock, aqblock, 2);
 		best_candidate->rotation = rotation;
-		best_candidate->swap = swap;
+		best_candidate->swap = doswap;
 		*best_err = err;
 	}	
 }
 
-void bc7_enc_mode45(bc7_enc_state state[])
+void bc7_enc_mode45( bc7_enc_state State[] )
 {
+	if ( !State->ModeEnabled[4] && !State->ModeEnabled[5] )
+		return;
+
 	mode45_parameters best_candidate;
-	float best_err = state->best_err;
+	float best_err = State->best_err;
 
-	memset(&best_candidate, 0, sizeof(mode45_parameters));
+	memset( &best_candidate, 0, sizeof(mode45_parameters) );
 
-	uniform int channel0 = state->mode45_channel0;
-	for (uniform int p=channel0; p<state->channels; p++)
+	uniform int channel0 = State->mode45_channel0;
+
+	// Mode 4.
+	if ( State->ModeEnabled[4] )
 	{
-		bc7_enc_mode45_candidate(state, &best_candidate, &best_err, 4, p, 0);
-		bc7_enc_mode45_candidate(state, &best_candidate, &best_err, 4, p, 1);
+		for ( uniform int p=channel0; p<State->channels; p++ )
+		{
+			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 4, p, 0 );
+			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 4, p, 1 );
+		}
+
+		if ( best_err<State->best_err )
+		{
+			State->best_err = best_err;
+			bc7_code_mode45( State->best_data, &best_candidate, 4 );
+		}
 	}
 
-	// mode 4
-	if (best_err<state->best_err)
+	// Mode 5.
+	if ( State->ModeEnabled[5] )
 	{
-		state->best_err = best_err;
-		bc7_code_mode45(state->best_data, &best_candidate, 4);
-	}
-    
-	for (uniform int p=channel0; p<state->channels; p++)
-		bc7_enc_mode45_candidate(state, &best_candidate, &best_err, 5, p, 0);
+		for ( uniform int p=channel0; p<State->channels; p++ )
+			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 5, p, 0 );
 
-	// mode 5
-	if (best_err<state->best_err)
-	{
-		state->best_err = best_err;
-		bc7_code_mode45(state->best_data, &best_candidate, 5);
+		if ( best_err<State->best_err )
+		{
+			State->best_err = best_err;
+			bc7_code_mode45( State->best_data, &best_candidate, 5 );
+		}
 	}
 }
 
-void bc7_enc_mode6(bc7_enc_state state[])
+void bc7_enc_mode6( bc7_enc_state State[] )
 {
+	if ( !State->ModeEnabled[6] )
+		return;
+
 	uniform int mode = 6;
 	uniform int bits = 4;
 	float ep[8];
-	block_segment(ep, state->block, -1, state->channels);
+	block_segment( ep, State->block, -1, State->channels );
     
-	if (state->channels == 3)
+	if (State->channels == 3)
 		ep[3] = ep[7] = 255;
 
 	int qep[8];
-	ep_quant_dequant(qep, ep, mode, state->channels);
+	ep_quant_dequant( qep, ep, mode, State->channels );
 
 	uint32 qblock[2];
-	float err = block_quant(qblock, state->block, bits, ep, 0, state->channels);
+	float err = block_quant( qblock, State->block, bits, ep, 0, State->channels );
 
 	// refine
-	uniform int refineIterations = state->refineIterations[mode];
-	for (uniform int i=0; i<refineIterations; i++)
+	uniform int RefineIterations = State->RefineIterations[mode];
+	for ( uniform int i=0; i<RefineIterations; i++ )
 	{
-		opt_endpoints(ep, state->block, bits, qblock, -1, state->channels);
-		ep_quant_dequant(qep, ep, mode, state->channels);
-		err = block_quant(qblock, state->block, bits, ep, 0, state->channels);
+		opt_endpoints( ep, State->block, bits, qblock, -1, State->channels );
+		ep_quant_dequant( qep, ep, mode, State->channels );
+		err = block_quant( qblock, State->block, bits, ep, 0, State->channels );
 	}
         
-	if (err<state->best_err)
+	if ( err<State->best_err )
 	{
-		state->best_err = err;
-		bc7_code_mode6(state->best_data, qep, qblock);
+		State->best_err = err;
+		bc7_code_mode6( State->best_data, qep, qblock );
 	}
 }
 
@@ -1415,62 +1479,67 @@ void bc7_code_mode6(uint32 data[5], int qep[8], uint32 qblock[2])
 //////////////////////////
 //       BC7 core
 
-inline void CompressBlockBC7_core(bc7_enc_state state[])
+// Returns false if no mode is enabled.
+uniform bool CopyAndSanitizeEncodingSettingsBC7( bc7_enc_state EncState[], uniform bc7_enc_settings EncSettings[] )
 {
-	if (state->mode_selection[0]) bc7_enc_mode02(state);
-	if (state->mode_selection[1]) bc7_enc_mode13(state);
-	if (state->mode_selection[1]) bc7_enc_mode7(state);
-	if (state->mode_selection[2]) bc7_enc_mode45(state);
-	if (state->mode_selection[3]) bc7_enc_mode6(state);
-}
+	EncState->channels = EncSettings->channels;
 
-void bc7_enc_copy_settings(bc7_enc_state state[], uniform bc7_enc_settings settings[])
-{
-	state->channels = settings->channels;
-	
-	// mode02
-	state->mode_selection[0] = settings->mode_selection[0];
-	state->skip_mode2 = settings->skip_mode2;
+	uniform int NumEnabledModes = 0;
+	for ( uniform int Mode=0; Mode<8; Mode++ )
+	{
+		EncState->ModeEnabled[Mode] = EncSettings->ModeEnabled[Mode];
+		if ( EncState->ModeEnabled[Mode] )
+			NumEnabledModes++;
 
-	state->refineIterations[0] = settings->refineIterations[0];
-	state->refineIterations[2] = settings->refineIterations[2];
+		//
+		// Limit the RefineIterations somewhat, to avoid close to infinity loops. The maximum value
+		// used in original ispc_texcomp profiles was 4, so this value should be large enough.
+		//
+		EncState->RefineIterations[Mode] = clamp( EncSettings->RefineIterations[Mode], 0, 32 );
+	}
 
-	// mode137
-	state->mode_selection[1] = settings->mode_selection[1];
-	state->fastSkipTreshold_mode1 = settings->fastSkipTreshold_mode1;
-	state->fastSkipTreshold_mode3 = settings->fastSkipTreshold_mode3;
-	state->fastSkipTreshold_mode7 = settings->fastSkipTreshold_mode7;
+	// Modes 0 and 2.
 
-	state->refineIterations[1] = settings->refineIterations[1];
-	state->refineIterations[3] = settings->refineIterations[3];
-	state->refineIterations[7] = settings->refineIterations[7];
+	// Modes 1, 3 and 7.
+	EncState->fastSkipTreshold_mode1  = clamp( EncState->ModeEnabled[1] ? EncSettings->fastSkipTreshold_mode1 : 0, 0, BC7_PARTITION_COUNT_MODE_1 );
+	EncState->fastSkipTreshold_mode3  = clamp( EncState->ModeEnabled[3] ? EncSettings->fastSkipTreshold_mode3 : 0, 0, BC7_PARTITION_COUNT_MODE_3 );
+	EncState->fastSkipTreshold_mode7  = clamp( EncState->ModeEnabled[7] ? EncSettings->fastSkipTreshold_mode7 : 0, 0, BC7_PARTITION_COUNT_MODE_7 );
+	EncState->fastSkipTreshold_mode13 = max( EncState->fastSkipTreshold_mode1, EncState->fastSkipTreshold_mode3 );
 
-	// mode45
-	state->mode_selection[2] = settings->mode_selection[2];
-    
-	state->mode45_channel0 = settings->mode45_channel0;
-	state->refineIterations_channel = settings->refineIterations_channel;
-	state->refineIterations[4] = settings->refineIterations[4];
-	state->refineIterations[5] = settings->refineIterations[5];
+	// Modes 4 and 5.
+	EncState->mode45_channel0 = EncSettings->mode45_channel0;
+	EncState->refineIterations_channel = EncSettings->refineIterations_channel;
 
-	// mode6
-	state->mode_selection[3] = settings->mode_selection[3];
+	// Mode 6.
 
-	state->refineIterations[6] = settings->refineIterations[6];
+	// Disable modes if no candidate partitions are allowed.
+	if ( EncSettings->fastSkipTreshold_mode1<=0 ) EncState->ModeEnabled[1] = false;
+	if ( EncSettings->fastSkipTreshold_mode3<=0 ) EncState->ModeEnabled[3] = false;
+	if ( EncSettings->fastSkipTreshold_mode7<=0 ) EncState->ModeEnabled[7] = false;
+
+	return NumEnabledModes>0;
 }
 
 ///////////////////////////////////////////////////////////
 // High level per block handling.
 //
 
+// !! FIX-ME !! Figure out why EncState is per block, and in any case move sanitization code to ispc code entry points.
 inline void CompressBlockBC7( bc7_enc_state EncState[], uniform bc7_enc_settings EncSettings[] )
 {
-	bc7_enc_copy_settings( EncState, EncSettings );
+	if ( !CopyAndSanitizeEncodingSettingsBC7(EncState,EncSettings) )
+	{
+		// !! FIX-ME !! No mode has been selected, deal with this
+	}
 
 	EncState->best_err   = 1e99;
 	EncState->opaque_err = compute_opaque_err( EncState->block, EncState->channels );
 
-	CompressBlockBC7_core( EncState );
+	bc7_enc_mode02( EncState );
+	bc7_enc_mode13( EncState );
+	bc7_enc_mode45( EncState );
+	bc7_enc_mode6( EncState );
+	bc7_enc_mode7( EncState );
 }
 
 
@@ -1706,8 +1775,8 @@ void bc6h_enc_2p_list(bc6h_enc_state state[], int part_list[], uniform int part_
 	}
 
 	// refine
-	uniform int refineIterations = state->refineIterations_2p;
-	for (uniform int _ = 0; _<refineIterations; _++)
+	uniform int RefineIterations = state->refineIterations_2p;
+	for (uniform int _ = 0; _<RefineIterations; _++)
 	{
 		float ep[24];
 		for (uniform int j = 0; j<pairs; j++)
@@ -1755,8 +1824,16 @@ void bc6h_enc_2p(bc6h_enc_state state[])
 		int bound = (int)(bound12);
 		part_list[part] = part + bound * 64;
 	}
-    
+   
+	//
+	// !! FIX-ME !!
+	//
+	// partial_sort_list seems to be O(all*parts) For fastSkipTreshold>?? it may already be faster
+	// to just sort the complete list. In practice this threshold is likely somewhat larger,
+	// but this is probably a worthwhile optimization in particular for the slow profiles. --han
+	//
 	partial_sort_list(part_list, 32, state->fastSkipTreshold);
+
 	bc6h_enc_2p_list(state, part_list, state->fastSkipTreshold);
 }
 
@@ -1772,8 +1849,8 @@ void bc6h_enc_1p(bc6h_enc_state state[])
 	float err = block_quant(qblock, state->block, 4, ep, 0, 3);
 
 	// refine
-	uniform int refineIterations = state->refineIterations_1p;
-	for (uniform int i = 0; i<refineIterations; i++)
+	uniform int RefineIterations = state->refineIterations_1p;
+	for (uniform int i = 0; i<RefineIterations; i++)
 	{
 		opt_endpoints(ep, state->block, 4, qblock, -1, 3);
 		ep_quant_dequant_bc6h(state, qep, ep, 1);
