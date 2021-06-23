@@ -201,9 +201,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ispc_texcomp.cpp" />
-    <ClCompile Include="ispc_texcomp_astc.cpp" />
+    <ClCompile Include="KTexComp.cpp" />
+    <ClCompile Include="KTexCompASTC.cpp" />
     <ClCompile Include="KTexCompBPTC.cpp" />
+    <ClCompile Include="KTexCompETC.cpp" />
+    <ClCompile Include="KTexCompS3TC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ispc_texcomp.h" />
@@ -218,7 +220,7 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ispc -O2 "%(Filename).ispc" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)%(Filename)_ispc.h" --arch=x86 --target=sse2,sse4,avx,avx2 --opt=fast-math</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">ispc -O2 "%(Filename).ispc" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)%(Filename)_ispc.h" --arch=x86 --target=avx2 --opt=fast-math</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename).obj;</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ispc -O2 "%(Filename).ispc" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)%(Filename)_ispc.h" --target=sse2,sse4,avx,avx2 --opt=fast-math</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|x64'">ispc -O2 "%(Filename).ispc" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)%(Filename)_ispc.h" --target=sse2,sse4,avx,avx2 --opt=fast-math</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
@@ -249,7 +251,7 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ispc -O2 "%(Filename).ispc" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)%(Filename)_ispc.h" --arch=x86 --target=sse2,sse4,avx,avx2 --opt=fast-math</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">ispc -O2 "%(Filename).ispc" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)%(Filename)_ispc.h" --arch=x86 --target=avx2 --opt=fast-math</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename).obj;</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ispc -O2 "%(Filename).ispc" -o "$(TargetDir)%(Filename).obj" -h "$(ProjectDir)%(Filename)_ispc.h" --arch=x86 --target=sse2,sse4,avx,avx2 --opt=fast-math</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">kernel_shared.isph</AdditionalInputs>
@@ -281,7 +283,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|x64'">kernel_shared.isph</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename).obj;</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|x64'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
@@ -302,7 +304,7 @@
       <FileType>Document</FileType>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|Win32'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename).obj;</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='ispc_texcomp (avx2 only)|x64'">$(TargetDir)%(Filename).obj;$(TargetDir)%(Filename)_sse2.obj;$(TargetDir)%(Filename)_sse4.obj;$(TargetDir)%(Filename)_avx.obj;$(TargetDir)%(Filename)_avx2.obj;</Outputs>

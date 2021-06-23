@@ -1,6 +1,7 @@
 LIBRARY   ispc_texcomp
 EXPORTS
 	CompressBlocksBC1
+	CompressBlocksBC1Alpha
 	CompressBlocksBC2
 	CompressBlocksBC3
 	CompressBlocksBC4
@@ -33,19 +34,21 @@ EXPORTS
 	GetProfile_astc_alpha_fast
 	GetProfile_astc_alpha_slow
 	ReplicateBorders
-	ISPCTC_BC1_Compress_RGBA8
-	ISPCTC_BC1_Compress_RGBA16
-	ISPCTC_BC2_Compress_RGBA8
-	ISPCTC_BC2_Compress_RGBA16
-	ISPCTC_BC3_Compress_RGBA8
-	ISPCTC_BC3_Compress_RGBA16
-	ISPCTC_BC4_Compress_R8
-	ISPCTC_BC4_Compress_R16
-	ISPCTC_BC5_Compress_RG8
-	ISPCTC_BC5_Compress_RG16
-	ISPCTC_BC6H_Compress_RGBA16F
-	ISPCTC_BC7_Compress_RGBA8
-	ISPCTC_BC7_Compress_RGBA16
-	ISPCTC_ETC1_Compress_RGBA8
-	ISPCTC_ETC1_Compress_RGBA16
-	ISPCTC_ASTC_CompressLDR_RGBA8
+	KTexCompBC1CompressRGBA8
+	KTexCompBC1CompressRGBA16
+	KTexCompBC1PACompressRGBA8
+	KTexCompBC1PACompressRGBA16
+	KTexCompBC2CompressRGBA8
+	KTexCompBC2CompressRGBA16
+	KTexCompBC3CompressRGBA8
+	KTexCompBC3CompressRGBA16
+	KTexCompBC4CompressR8
+	KTexCompBC4CompressR16
+	KTexCompBC5CompressRG8
+	KTexCompBC5CompressRG16
+	KTexCompBC6HCompressRGBA16F
+	KTexCompBC7CompressRGBA8
+	KTexCompBC7CompressRGBA16
+	KTexCompETC1CompressRGBA8
+	KTexCompETC1CompressRGBA16
+	KTexCompASTCLDRCompressRGBA8

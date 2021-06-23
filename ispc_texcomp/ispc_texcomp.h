@@ -1,27 +1,39 @@
 //
-//  Copyright (c) 2016 Intel Corporation
+// KTexComp public header file.
 //
-//  Permission is hereby granted, free of charge, to any person obtaining a copy of this 
-//  software and associated documentation files (the "Software"), to deal in the Software 
-//  without restriction, including without limitation the rights to use, copy, modify, 
-//  merge, publish, distribute, sublicense, and/or sell copies of the Software, and to 
-//  permit persons to whom the Software is furnished to do so, subject to the following 
-//  conditions: 
+// Copyright (c) 2016 Intel Corporation
+// Copyright (c) 2020 Sebastian Kaufel
 //
-//  The above copyright notice and this permission notice shall be included in all copies 
-//  or substantial portions of the Software.  
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this 
+// software and associated documentation files (the "Software"), to deal in the Software 
+// without restriction, including without limitation the rights to use, copy, modify, 
+// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to 
+// permit persons to whom the Software is furnished to do so, subject to the following 
+// conditions: 
 //
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
-//  INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
-//  PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-//  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-//  CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
-//  OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// The above copyright notice and this permission notice shall be included in all copies 
+// or substantial portions of the Software.  
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 #ifndef ISPCTC_NO_STDINT_INCLUDE
 	#include <stdint.h>
 #endif
+
+#if __cplusplus
+extern "C" 
+{
+#endif
+
+//
+// Shared.
+//
 
 struct rgba_surface 
 {
@@ -47,6 +59,148 @@ struct red_surface
 	int32_t stride; // in bytes
 };
 
+// Surface definitions.
+#define ISPCTC_DELARE_SURFACE(name) \
+	struct name \
+	{ \
+		uint8_t* Ptr; \
+		int32_t  Width; \
+		int32_t  Height; \
+		int32_t  Stride; \
+	};
+
+// 8 bit unsigned int/component
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R8)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG8)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA8)
+
+// 8 bit signed int/component
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R8S)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG8S)
+
+// 16 bit unsigned int/component
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R16)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG16)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA16)
+
+// 16 bit signed int/component
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R16S)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG16S)
+
+// 16 bit float/component.
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R16F)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG16F)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA16F)
+
+// 32 bit float/component
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R32F)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG32F)
+ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA32F)
+
+//
+// BC1-BC5.
+//
+
+// BC1.
+void KBC1EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
+void KBC1EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
+//void KBC1EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
+
+// BC1 Punchthrough Alpha.
+void KBC1PAEncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
+void KBC1PAEncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
+//void KBC1PAEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
+
+
+// BC2.
+void KBC2EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
+void KBC2EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
+//void KBC2Encode_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
+
+// BC3.
+void KBC3EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
+void KBC3EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
+//void KBC3Encode_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
+
+// BC4.
+void KBC4EncodeR8( const ISPCTC_Surface_R8* InputSurface, uint8_t* OutputBlocks );
+void KBC4EncodeR16( const ISPCTC_Surface_R16* InputSurface, uint8_t* OutputBlocks );
+//void KBC4EncodeR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
+//void KBC4SEncodeR8S( const ISPCTC_Surface_R8S* InputSurface, uint8_t* OutputBlocks );
+//void KBC4SEncodeR16S( const ISPCTC_Surface_R16S* InputSurface, uint8_t* OutputBlocks );
+//void KBC4SEncodeSR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
+
+// BC5.
+void KBC5EncodeRG8( const ISPCTC_Surface_RG8* InputSurface, uint8_t* OutputBlocks );
+void KBC5EncodeRG16( const ISPCTC_Surface_RG16* InputSurface, uint8_t* OutputBlocks );
+//void KBC5EncodeRG32F( const ISPCTC_Surface_RG32F* InputSurface, uint8_t* OutputBlocks );
+//void KBC5SEncodeRG8S( const ISPCTC_Surface_RG8S* InputSurface, uint8_t* OutputBlocks );
+//void KBC5SEncodeRG16S( const ISPCTC_Surface_RG16S* InputSurface, uint8_t* OutputBlocks );
+//void KBC5SEncodeRG32F( const ISPCTC_Surface_RG32F* InputSurface, uint8_t* OutputBlocks );
+
+// BC1.
+//void KBC1DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void KBC1DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void KBC1DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+
+// BC1 Punchthrough Alpha.
+//void KBC1PADecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void KBC1PADecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void KBC1PADecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+
+// BC2.
+//void KBC2DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void KBC2DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void KBC2DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+
+// BC3.
+//void KBC3DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void KBC3DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void KBC3DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+
+// BC4.
+//void KBC4DecodeR8( const uint8_t* InputBlocks, const ISPCTC_Surface_R8* OutputSurface );
+//void KBC4DecodeR16( const uint8_t* InputBlocks, const ISPCTC_Surface_R16* OutputSurface );
+//void KBC4DecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_R32F* OutputSurface );
+//void KBC4DecodeSigned_R8S( const uint8_t* InputBlocks, const ISPCTC_Surface_R8S* OutputSurface );
+//void KBC4DecodeSigned_R16S( const uint8_t* InputBlocks, const ISPCTC_Surface_R16S* OutputSurface );
+//void KBC4DecodeSigned_R32F( const uint8_t* InputBlocks, const ISPCTC_Surface_R32F* OutputSurface );
+
+// BC5.
+//void KBC5DecodeRG8( const uint8_t* InputBlocks, const ISPCTC_Surface_RG8* OutputSurface );
+//void KBC5DecodeR16( const uint8_t* InputBlocks, const ISPCTC_Surface_RG16* OutputSurface );
+//void KBC5DecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RG32F* OutputSurface );
+//void KBC5SDecodeR8S( const uint8_t* InputBlocks, const ISPCTC_Surface_RG8S* OutputSurface );
+//void KBC5SDecodeR16S( const uint8_t* InputBlocks, const ISPCTC_Surface_RG16S* OutputSurface );
+//void KBC5SDecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RG32F* OutputSurface );
+
+
+
+
+
+
+
+//
+// BC6H and BC7.
+//
+
+
+struct bc6h_enc_settings
+{
+	bool slow_mode;
+	bool fast_mode;
+	int refineIterations_1p;
+	int refineIterations_2p;
+	int fastSkipTreshold;
+};
+
+// profiles for BC6H (RGB HDR)
+void GetProfile_bc6h_veryfast(bc6h_enc_settings* settings);
+void GetProfile_bc6h_fast(bc6h_enc_settings* settings);
+void GetProfile_bc6h_basic(bc6h_enc_settings* settings);
+void GetProfile_bc6h_slow(bc6h_enc_settings* settings);
+void GetProfile_bc6h_veryslow(bc6h_enc_settings* settings);
+
 struct bc7_enc_settings
 {
 	bool ModeEnabled[8];
@@ -60,21 +214,77 @@ struct bc7_enc_settings
 	int refineIterations_channel;
 
 	int channels;
+	bool IgnoreAlphaError;
 };
 
-struct bc6h_enc_settings
-{
-	bool slow_mode;
-	bool fast_mode;
-	int refineIterations_1p;
-	int refineIterations_2p;
-	int fastSkipTreshold;
-};
+// profiles for RGB data (alpha channel will be ignored)
+void GetProfile_ultrafast(bc7_enc_settings* settings);
+void GetProfile_veryfast(bc7_enc_settings* settings);
+void GetProfile_fast(bc7_enc_settings* settings);
+void GetProfile_basic(bc7_enc_settings* settings);
+void GetProfile_slow(bc7_enc_settings* settings);
+void GetProfile_veryslow(bc7_enc_settings* settings);
 
-struct etc_enc_settings
-{
-	int fastSkipTreshold;
-};
+// profiles for RGBA inputs
+void GetProfile_alpha_ultrafast(bc7_enc_settings* settings);
+void GetProfile_alpha_veryfast(bc7_enc_settings* settings);
+void GetProfile_alpha_fast(bc7_enc_settings* settings);
+void GetProfile_alpha_basic(bc7_enc_settings* settings);
+void GetProfile_alpha_slow(bc7_enc_settings* settings);
+void GetProfile_alpha_veryslow(bc7_enc_settings* settings);
+void GetProfile_veryslow(bc7_enc_settings* settings);
+
+// For library internal development use only.
+void GetProfile_development( bc7_enc_settings* Settings );
+void GetProfile_bc6h_development( bc6h_enc_settings* Settings );
+
+
+// BC6H.
+void KBC6HEncodeRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
+//void KBC6HEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
+//void KBC6HSEncodeRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
+//void KBC6HSEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
+//void KBC6HDecodeRGBA16F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16F* OutputSurface );
+//void KBC6HDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+//void KBC6HSDecodeRGBA16F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16F* OutputSurface );
+//void KBC6HSDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+
+// BC7.
+void KBC7EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
+void KBC7EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
+//void KBC7EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
+//void KBC7DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void KBC7DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void KBC7DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+
+
+
+//
+// ETC, ETC2 and EAC.
+//
+
+struct KETC1EncodeSettings;
+
+int32_t KETC1EncodeSettingsSize();
+
+// profiles for ETC
+void GetProfile_etc_slow(KETC1EncodeSettings* settings);
+
+// Encoding.
+void KETC1EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
+void KETC1EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
+//void KETC1EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
+
+// Decoding.
+//void KETC1DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void KETC1DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void KETC1DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+
+
+
+//
+// ASTC.
+//
 
 struct astc_enc_settings
 {
@@ -86,71 +296,34 @@ struct astc_enc_settings
 	int refineIterations;
 };
 
-// profiles for RGB data (alpha channel will be ignored)
-extern "C" void GetProfile_ultrafast(bc7_enc_settings* settings);
-extern "C" void GetProfile_veryfast(bc7_enc_settings* settings);
-extern "C" void GetProfile_fast(bc7_enc_settings* settings);
-extern "C" void GetProfile_basic(bc7_enc_settings* settings);
-extern "C" void GetProfile_slow(bc7_enc_settings* settings);
-extern "C" void GetProfile_veryslow(bc7_enc_settings* settings);
-
-// profiles for RGBA inputs
-extern "C" void GetProfile_alpha_ultrafast(bc7_enc_settings* settings);
-extern "C" void GetProfile_alpha_veryfast(bc7_enc_settings* settings);
-extern "C" void GetProfile_alpha_fast(bc7_enc_settings* settings);
-extern "C" void GetProfile_alpha_basic(bc7_enc_settings* settings);
-extern "C" void GetProfile_alpha_slow(bc7_enc_settings* settings);
-extern "C" void GetProfile_alpha_veryslow(bc7_enc_settings* settings);
-extern "C" void GetProfile_veryslow(bc7_enc_settings* settings);
-
-// profiles for BC6H (RGB HDR)
-extern "C" void GetProfile_bc6h_veryfast(bc6h_enc_settings* settings);
-extern "C" void GetProfile_bc6h_fast(bc6h_enc_settings* settings);
-extern "C" void GetProfile_bc6h_basic(bc6h_enc_settings* settings);
-extern "C" void GetProfile_bc6h_slow(bc6h_enc_settings* settings);
-extern "C" void GetProfile_bc6h_veryslow(bc6h_enc_settings* settings);
-
-// profiles for ETC
-extern "C" void GetProfile_etc_slow(etc_enc_settings* settings);
-
 // profiles for ASTC
-extern "C" void GetProfile_astc_fast(astc_enc_settings* settings, int block_width, int block_height);
-extern "C" void GetProfile_astc_alpha_fast(astc_enc_settings* settings, int block_width, int block_height);
-extern "C" void GetProfile_astc_alpha_slow(astc_enc_settings* settings, int block_width, int block_height);
+void GetProfile_astc_fast(astc_enc_settings* settings, int block_width, int block_height);
+void GetProfile_astc_alpha_fast(astc_enc_settings* settings, int block_width, int block_height);
+void GetProfile_astc_alpha_slow(astc_enc_settings* settings, int block_width, int block_height);
 
-// For library internal development use only.
-extern "C" void GetProfile_development( bc7_enc_settings* Settings );
-extern "C" void GetProfile_bc6h_development( bc6h_enc_settings* Settings );
+// Encodeion.
+void KASTCLDREncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+//void KASTCLDREncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+//void KASTCLDREncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+
+// Decodeion.
+//void KASTCLDRDecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void KASTCLDRDecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void KASTCLDRDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+
+
+
+
+//
+// Junk to weed out.
+//
 
 // helper function to replicate border pixels for the desired block sizes (bpp = 32 or 64)
-extern "C" void ReplicateBorders(rgba_surface* dst_slice, const rgba_surface* src_tex, int x, int y, int bpp);
-
-/*
-	Notes:
-	 - input width and height need to be a multiple of block size
-	 - BC4 input is 8 bit/pixel, BC5 input is 16 bit/pixel, otherwise LDR input is 32 bit/pixel (sRGB) and HDR is 64 bit/pixel (half float)
-	 - dst buffer must be allocated with enough space for the compressed texture:
-	   4 bytes/block for BC1/BC4/ETC1, 8 bytes/block for BC2/BC3/BC5/BC6H/BC7/ASTC
-	   the blocks are stored in raster scan order (natural CPU texture layout)
-	 - BC6H input needs to be non negative.
-	 - you can use GetProfile_* functions to select various speed/quality tradeoffs.
-	 - the RGB profiles are slightly faster as they ignore the alpha channel
-*/
-
-extern "C" void CompressBlocksBC1(const rgba_surface* src, uint8_t* dst);
-extern "C" void CompressBlocksBC2(const rgba_surface* src, uint8_t* dst);
-extern "C" void CompressBlocksBC3(const rgba_surface* src, uint8_t* dst);
-extern "C" void CompressBlocksBC4(const red_surface* src, uint8_t* dst);
-extern "C" void CompressBlocksBC5(const rg_surface* src, uint8_t* dst);
-extern "C" void CompressBlocksBC6H(const rgba_surface* src, uint8_t* dst, bc6h_enc_settings* settings);
-extern "C" void CompressBlocksBC7(const rgba_surface* src, uint8_t* dst, bc7_enc_settings* settings);
-extern "C" void CompressBlocksETC1(const rgba_surface* src, uint8_t* dst, etc_enc_settings* settings);
-extern "C" void CompressBlocksASTC(const rgba_surface* src, uint8_t* dst, astc_enc_settings* settings);
-
+void ReplicateBorders(rgba_surface* dst_slice, const rgba_surface* src_tex, int x, int y, int bpp);
 
 /*
 	Prototyping for new API. Subject to frequent change for now.
-	
+
 	Ideas:
 		- Add size parameters similiar to snprintf vs. sprintf.
 		- Add a return value, to indicate wrong input/output memory size or internal errors which are currently asserts.
@@ -191,152 +364,26 @@ extern "C" void CompressBlocksASTC(const rgba_surface* src, uint8_t* dst, astc_e
 				 - This will affect quality for the highest mip levels.
 */
 
-// Surface definitions.
-#define ISPCTC_DELARE_SURFACE(name) \
-	struct name \
-	{ \
-		uint8_t* Ptr; \
-		int32_t  Width; \
-		int32_t  Height; \
-		int32_t  Stride; \
-	};
+//
+// Legacy ispc_texcomp.
+//
 
-// 8 bit unsigned int/component
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R8)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG8)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA8)
+/*
+	Notes:
+	 - input width and height need to be a multiple of block size
+	 - BC4 input is 8 bit/pixel, BC5 input is 16 bit/pixel, otherwise LDR input is 32 bit/pixel (sRGB) and HDR is 64 bit/pixel (half float)
+	 - dst buffer must be allocated with enough space for the compressed texture:
+	   4 bytes/block for BC1/BC4/ETC1, 8 bytes/block for BC2/BC3/BC5/BC6H/BC7/ASTC
+	   the blocks are stored in raster scan order (natural CPU texture layout)
+	 - BC6H input needs to be non negative.
+	 - you can use GetProfile_* functions to select various speed/quality tradeoffs.
+	 - the RGB profiles are slightly faster as they ignore the alpha channel
+*/
 
-// 8 bit signed int/component
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R8S)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG8S)
-
-// 16 bit unsigned int/component
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R16)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG16)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA16)
-
-// 16 bit signed int/component
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R16S)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG16S)
-
-// 16 bit float/component.
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R16F)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG16F)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA16F)
-
-// 32 bit float/component
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_R32F)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RG32F)
-ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA32F)
-
-// Compression API.
-extern "C"
-{
-	// BC1.
-	void ISPCTC_BC1_Compress_RGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
-	void ISPCTC_BC1_Compress_RGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC1_Compress_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
-
-	// BC2.
-	void ISPCTC_BC2_Compress_RGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
-	void ISPCTC_BC2_Compress_RGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC2_Compress_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
-
-	// BC3.
-	void ISPCTC_BC3_Compress_RGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
-	void ISPCTC_BC3_Compress_RGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC3_Compress_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
-
-	// BC4.
-	void ISPCTC_BC4_Compress_R8( const ISPCTC_Surface_R8* InputSurface, uint8_t* OutputBlocks );
-	void ISPCTC_BC4_Compress_R16( const ISPCTC_Surface_R16* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC4_Compress_R32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC4_CompressSigned_R8S( const ISPCTC_Surface_R8S* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC4_CompressSigned_R16S( const ISPCTC_Surface_R16S* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC4_CompressSigned_R32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
-
-	// BC5.
-	void ISPCTC_BC5_Compress_RG8( const ISPCTC_Surface_RG8* InputSurface, uint8_t* OutputBlocks );
-	void ISPCTC_BC5_Compress_RG16( const ISPCTC_Surface_RG16* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC5_Compress_RG32F( const ISPCTC_Surface_RG32F* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC5_CompressSigned_RG8S( const ISPCTC_Surface_RG8S* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC5_CompressSigned_RG16S( const ISPCTC_Surface_RG16S* InputSurface, uint8_t* OutputBlocks );
-	//void ISPCTC_BC5_CompressSigned_RG32F( const ISPCTC_Surface_RG32F* InputSurface, uint8_t* OutputBlocks );
-
-	// BC6H.
-	void ISPCTC_BC6H_Compress_RGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
-	//void ISPCTC_BC6H_Compress_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
-	//void ISPCTC_BC6H_CompressSigned_RGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
-	//void ISPCTC_BC6H_CompressSigned_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
-
-	// BC7.
-	void ISPCTC_BC7_Compress_RGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
-	void ISPCTC_BC7_Compress_RGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
-	//void ISPCTC_BC7_Compress_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
-
-	// ETC1.
-	void ISPCTC_ETC1_Compress_RGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, etc_enc_settings* EncSettings );
-	void ISPCTC_ETC1_Compress_RGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, etc_enc_settings* EncSettings );
-	//void ISPCTC_ETC1_Compress_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, etc_enc_settings* EncSettings );
-
-	// ASTC.
-	void ISPCTC_ASTC_CompressLDR_RGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
-	//void ISPCTC_ASTC_CompressLDR_RGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
-	//void ISPCTC_ASTC_CompressLDR_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+#if __cplusplus
 }
+#endif
 
-// Decompression API.
-extern "C"
-{
-	// BC1.
-	//void ISPCTC_BC1_Decompress_RGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-	//void ISPCTC_BC1_Decompress_RGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-	//void ISPCTC_BC1_Decompress_RGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-
-	// BC2.
-	//void ISPCTC_BC2_Decompress_RGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-	//void ISPCTC_BC2_Decompress_RGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-	//void ISPCTC_BC2_Decompress_RGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-
-	// BC3.
-	//void ISPCTC_BC3_Decompress_RGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-	//void ISPCTC_BC3_Decompress_RGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-	//void ISPCTC_BC3_Decompress_RGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-
-	// BC4.
-	//void ISPCTC_BC4_Decompress_R8( const uint8_t* InputBlocks, const ISPCTC_Surface_R8* OutputSurface );
-	//void ISPCTC_BC4_Decompress_R16( const uint8_t* InputBlocks, const ISPCTC_Surface_R16* OutputSurface );
-	//void ISPCTC_BC4_Decompress_R32F( const uint8_t* InputBlocks, const ISPCTC_Surface_R32F* OutputSurface );
-	//void ISPCTC_BC4_CompressSigned_R8S( const uint8_t* InputBlocks, const ISPCTC_Surface_R8S* OutputSurface );
-	//void ISPCTC_BC4_CompressSigned_R16S( const uint8_t* InputBlocks, const ISPCTC_Surface_R16S* OutputSurface );
-	//void ISPCTC_BC4_CompressSigned_R32F( const uint8_t* InputBlocks, const ISPCTC_Surface_R32F* OutputSurface );
-
-	// BC5.
-	//void ISPCTC_BC5_Decompress_RG8( const uint8_t* InputBlocks, const ISPCTC_Surface_RG8* OutputSurface );
-	//void ISPCTC_BC5_Decompress_R16( const uint8_t* InputBlocks, const ISPCTC_Surface_RG16* OutputSurface );
-	//void ISPCTC_BC5_Decompress_R32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RG32F* OutputSurface );
-	//void ISPCTC_BC5_CompressSigned_R8S( const uint8_t* InputBlocks, const ISPCTC_Surface_RG8S* OutputSurface );
-	//void ISPCTC_BC5_CompressSigned_R16S( const uint8_t* InputBlocks, const ISPCTC_Surface_RG16S* OutputSurface );
-	//void ISPCTC_BC5_CompressSigned_R32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RG32F* OutputSurface );
-
-	// BC6H.
-	//void ISPCTC_BC6H_Decompress_RGBA16F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16F* OutputSurface );
-	//void ISPCTC_BC6H_Decompress_RGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-	//void ISPCTC_BC6H_CompressSigned_RGBA16F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16F* OutputSurface );
-	//void ISPCTC_BC6H_CompressSigned_RGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-
-	// BC7.
-	//void ISPCTC_BC7_Decompress_RGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-	//void ISPCTC_BC7_Decompress_RGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-	//void ISPCTC_BC7_Decompress_RGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-
-	// ETC1.
-	//void ISPCTC_ETC1_Decompress_RGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-	//void ISPCTC_ETC1_Decompress_RGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-	//void ISPCTC_ETC1_Decompress_RGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-
-	// ASTC.
-	//void ISPCTC_ASTC_CompressLDR_RGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-	//void ISPCTC_ASTC_CompressLDR_RGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-	//void ISPCTC_ASTC_CompressLDR_RGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-}
+//
+// The End.
+//
