@@ -22,7 +22,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#include "ispc_texcomp.h"
+#include "BC.h"
 #include "kernel_astc_ispc.h"
 #include <cassert>
 #include <cstring>
@@ -509,13 +509,8 @@ void astc_encode(const rgba_surface* src, float* block_scores, uint8_t* dst, uin
 	ispc::astc_encode_ispc((ispc::rgba_surface*)src, block_scores, dst, list, &list_context, (ispc::astc_enc_settings*)settings);
 }
 
-void CompressBlocksASTC(const rgba_surface* src, uint8_t* dst, astc_enc_settings* settings)
-{
-	KTexCompASTCLDRCompressRGBA8( (const ISPCTC_Surface_RGBA8*)src, dst, settings );
-}
-
 // ASTC.
-void KTexCompASTCLDRCompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings )
+void ASTCCompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings )
 {
 	assert(InputSurface->Height % EncSettings->block_height == 0);
 	assert(InputSurface->Width % EncSettings->block_width == 0);
@@ -586,8 +581,8 @@ void KTexCompASTCLDRCompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uin
 		memset(mode_list, 0, list_size * sizeof(uint64_t));
 	}
 }
-//void KTexCompASTCLDRCompressRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
-//void KTexCompASTCLDRCompressRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+//void ASTCCompressRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+//void ASTCCompressRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
 
 //
 // The End.

@@ -22,7 +22,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#include "ispc_texcomp.h"
+#include "BC.h"
 #include "kernel_etc_ispc.h"
 
 //
@@ -40,19 +40,15 @@ void GetProfile_etc_slow(KETC1EncodeSettings* settings)
 }
 
 // ETC1.
-void CompressBlocksETC1( const rgba_surface* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings )
-{
-	KTexCompETC1CompressRGBA8( (const ISPCTC_Surface_RGBA8*)InputSurface, OutputBlocks, Settings );
-}
-void KTexCompETC1CompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings )
+void ETC1CompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings )
 {
 	ispc::ETC1_Compress_RGBA8( (ispc::Surface_RGBA8*)InputSurface, OutputBlocks, (ispc::etc_enc_settings*)Settings );
 }
-void KTexCompETC1CompressRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings )
+void ETC1CompressRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings )
 {
 	ispc::ETC1_Compress_RGBA16( (ispc::Surface_RGBA16*)InputSurface, OutputBlocks, (ispc::etc_enc_settings*)Settings );
 }
-//void KTexCompETC1CompressRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
+//void pETC1CompressRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
 //{
 //	ispc::ETC1_Compress_RGBA32F( (ispc::Surface_RGBA32F*)InputSurface, OutputBlocks, (ispc::etc_enc_settings*)Settings );
 //}

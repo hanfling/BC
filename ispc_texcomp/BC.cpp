@@ -22,7 +22,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#include "ispc_texcomp.h"
+#include "BC.h"
 #include "memory.h" // memcpy
 
 void ReplicateBorders(rgba_surface* dst_slice, const rgba_surface* src_tex, int start_x, int start_y, int bpp)

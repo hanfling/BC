@@ -102,77 +102,77 @@ ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA32F)
 //
 
 // BC1.
-void KBC1EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
-void KBC1EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
-//void KBC1EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
+void BC1EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
+void BC1EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
+//void BC1EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
 
 // BC1 Punchthrough Alpha.
-void KBC1PAEncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
-void KBC1PAEncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
-//void KBC1PAEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
+void BC1PAEncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
+void BC1PAEncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
+//void BC1PAEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
 
 
 // BC2.
-void KBC2EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
-void KBC2EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
-//void KBC2Encode_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
+void BC2EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
+void BC2EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
+//void BC2Encode_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
 
 // BC3.
-void KBC3EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
-void KBC3EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
-//void KBC3Encode_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
+void BC3EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
+void BC3EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
+//void BC3Encode_RGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
 
 // BC4.
-void KBC4EncodeR8( const ISPCTC_Surface_R8* InputSurface, uint8_t* OutputBlocks );
-void KBC4EncodeR16( const ISPCTC_Surface_R16* InputSurface, uint8_t* OutputBlocks );
-//void KBC4EncodeR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
-//void KBC4SEncodeR8S( const ISPCTC_Surface_R8S* InputSurface, uint8_t* OutputBlocks );
-//void KBC4SEncodeR16S( const ISPCTC_Surface_R16S* InputSurface, uint8_t* OutputBlocks );
-//void KBC4SEncodeSR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
+void BC4EncodeR8( const ISPCTC_Surface_R8* InputSurface, uint8_t* OutputBlocks );
+void BC4EncodeR16( const ISPCTC_Surface_R16* InputSurface, uint8_t* OutputBlocks );
+//void BC4EncodeR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
+//void BC4SEncodeR8S( const ISPCTC_Surface_R8S* InputSurface, uint8_t* OutputBlocks );
+//void BC4SEncodeR16S( const ISPCTC_Surface_R16S* InputSurface, uint8_t* OutputBlocks );
+//void BC4SEncodeSR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
 
 // BC5.
-void KBC5EncodeRG8( const ISPCTC_Surface_RG8* InputSurface, uint8_t* OutputBlocks );
-void KBC5EncodeRG16( const ISPCTC_Surface_RG16* InputSurface, uint8_t* OutputBlocks );
-//void KBC5EncodeRG32F( const ISPCTC_Surface_RG32F* InputSurface, uint8_t* OutputBlocks );
-//void KBC5SEncodeRG8S( const ISPCTC_Surface_RG8S* InputSurface, uint8_t* OutputBlocks );
-//void KBC5SEncodeRG16S( const ISPCTC_Surface_RG16S* InputSurface, uint8_t* OutputBlocks );
-//void KBC5SEncodeRG32F( const ISPCTC_Surface_RG32F* InputSurface, uint8_t* OutputBlocks );
+void BC5EncodeRG8( const ISPCTC_Surface_RG8* InputSurface, uint8_t* OutputBlocks );
+void BC5EncodeRG16( const ISPCTC_Surface_RG16* InputSurface, uint8_t* OutputBlocks );
+//void BC5EncodeRG32F( const ISPCTC_Surface_RG32F* InputSurface, uint8_t* OutputBlocks );
+//void BC5SEncodeRG8S( const ISPCTC_Surface_RG8S* InputSurface, uint8_t* OutputBlocks );
+//void BC5SEncodeRG16S( const ISPCTC_Surface_RG16S* InputSurface, uint8_t* OutputBlocks );
+//void BC5SEncodeRG32F( const ISPCTC_Surface_RG32F* InputSurface, uint8_t* OutputBlocks );
 
 // BC1.
-//void KBC1DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-//void KBC1DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-//void KBC1DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+//void BC1DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void BC1DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void BC1DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
 
 // BC1 Punchthrough Alpha.
-//void KBC1PADecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-//void KBC1PADecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-//void KBC1PADecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+//void BC1PADecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void BC1PADecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void BC1PADecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
 
 // BC2.
-//void KBC2DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-//void KBC2DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-//void KBC2DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+//void BC2DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void BC2DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void BC2DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
 
 // BC3.
-//void KBC3DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-//void KBC3DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-//void KBC3DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+//void BC3DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void BC3DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void BC3DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
 
 // BC4.
-//void KBC4DecodeR8( const uint8_t* InputBlocks, const ISPCTC_Surface_R8* OutputSurface );
-//void KBC4DecodeR16( const uint8_t* InputBlocks, const ISPCTC_Surface_R16* OutputSurface );
-//void KBC4DecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_R32F* OutputSurface );
-//void KBC4DecodeSigned_R8S( const uint8_t* InputBlocks, const ISPCTC_Surface_R8S* OutputSurface );
-//void KBC4DecodeSigned_R16S( const uint8_t* InputBlocks, const ISPCTC_Surface_R16S* OutputSurface );
-//void KBC4DecodeSigned_R32F( const uint8_t* InputBlocks, const ISPCTC_Surface_R32F* OutputSurface );
+//void BC4DecodeR8( const uint8_t* InputBlocks, const ISPCTC_Surface_R8* OutputSurface );
+//void BC4DecodeR16( const uint8_t* InputBlocks, const ISPCTC_Surface_R16* OutputSurface );
+//void BC4DecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_R32F* OutputSurface );
+//void BC4DecodeSigned_R8S( const uint8_t* InputBlocks, const ISPCTC_Surface_R8S* OutputSurface );
+//void BC4DecodeSigned_R16S( const uint8_t* InputBlocks, const ISPCTC_Surface_R16S* OutputSurface );
+//void BC4DecodeSigned_R32F( const uint8_t* InputBlocks, const ISPCTC_Surface_R32F* OutputSurface );
 
 // BC5.
-//void KBC5DecodeRG8( const uint8_t* InputBlocks, const ISPCTC_Surface_RG8* OutputSurface );
-//void KBC5DecodeR16( const uint8_t* InputBlocks, const ISPCTC_Surface_RG16* OutputSurface );
-//void KBC5DecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RG32F* OutputSurface );
-//void KBC5SDecodeR8S( const uint8_t* InputBlocks, const ISPCTC_Surface_RG8S* OutputSurface );
-//void KBC5SDecodeR16S( const uint8_t* InputBlocks, const ISPCTC_Surface_RG16S* OutputSurface );
-//void KBC5SDecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RG32F* OutputSurface );
+//void BC5DecodeRG8( const uint8_t* InputBlocks, const ISPCTC_Surface_RG8* OutputSurface );
+//void BC5DecodeR16( const uint8_t* InputBlocks, const ISPCTC_Surface_RG16* OutputSurface );
+//void BC5DecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RG32F* OutputSurface );
+//void BC5SDecodeR8S( const uint8_t* InputBlocks, const ISPCTC_Surface_RG8S* OutputSurface );
+//void BC5SDecodeR16S( const uint8_t* InputBlocks, const ISPCTC_Surface_RG16S* OutputSurface );
+//void BC5SDecodeR32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RG32F* OutputSurface );
 
 
 
@@ -240,22 +240,22 @@ void GetProfile_bc6h_development( bc6h_enc_settings* Settings );
 
 
 // BC6H.
-void KBC6HEncodeRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
-//void KBC6HEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
-//void KBC6HSEncodeRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
-//void KBC6HSEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
-//void KBC6HDecodeRGBA16F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16F* OutputSurface );
-//void KBC6HDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
-//void KBC6HSDecodeRGBA16F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16F* OutputSurface );
-//void KBC6HSDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+void BC6HEncodeRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
+//void BC6HEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
+//void BC6HSEncodeRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
+//void BC6HSEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings );
+//void BC6HDecodeRGBA16F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16F* OutputSurface );
+//void BC6HDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+//void BC6HSDecodeRGBA16F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16F* OutputSurface );
+//void BC6HSDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
 
 // BC7.
-void KBC7EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
-void KBC7EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
-//void KBC7EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
-//void KBC7DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-//void KBC7DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-//void KBC7DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+void BC7EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
+void BC7EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
+//void BC7EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
+//void BC7DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void BC7DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void BC7DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
 
 
 
@@ -271,14 +271,14 @@ int32_t KETC1EncodeSettingsSize();
 void GetProfile_etc_slow(KETC1EncodeSettings* settings);
 
 // Encoding.
-void KETC1EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
-void KETC1EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
-//void KETC1EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
+void ETC1EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
+void ETC1EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
+//void ETC1EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, KETC1EncodeSettings* Settings );
 
 // Decoding.
-//void KETC1DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-//void KETC1DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-//void KETC1DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+//void ETC1DecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void ETC1DecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void ETC1DecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
 
 
 
@@ -286,7 +286,7 @@ void KETC1EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* Outp
 // ASTC.
 //
 
-struct astc_enc_settings
+struct astc_enc_settings // !! Add LDR as setting
 {
 	int block_width;
 	int block_height;
@@ -302,14 +302,14 @@ void GetProfile_astc_alpha_fast(astc_enc_settings* settings, int block_width, in
 void GetProfile_astc_alpha_slow(astc_enc_settings* settings, int block_width, int block_height);
 
 // Encodeion.
-void KASTCLDREncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
-//void KASTCLDREncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
-//void KASTCLDREncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+void ASTCEncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+//void ASTCEncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+//void ASTCEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
 
 // Decodeion.
-//void KASTCLDRDecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
-//void KASTCLDRDecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
-//void KASTCLDRDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
+//void ASTCDecodeRGBA8( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA8* OutputSurface );
+//void ASTCDecodeRGBA16( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA16* OutputSurface );
+//void ASTCDecodeRGBA32F( const uint8_t* InputBlocks, const ISPCTC_Surface_RGBA32F* OutputSurface );
 
 
 

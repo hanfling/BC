@@ -22,7 +22,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#include "ispc_texcomp.h"
+#include "BC.h"
 #include "kernel_bptc_ispc.h"
 
 //
@@ -546,11 +546,7 @@ void GetProfile_development( bc7_enc_settings* Settings )
 //
 // BC6H entry points into ispc  code.
 //
-void CompressBlocksBC6H( const rgba_surface* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings )
-{
-	KTexCompBC6HCompressRGBA16F( (const ISPCTC_Surface_RGBA16F*)InputSurface, OutputBlocks, EncSettings );
-}
-void KTexCompBC6HCompressRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings )
+void BC6HCompressRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, uint8_t* OutputBlocks, bc6h_enc_settings* EncSettings )
 {
 	ispc::CompressBlocksBC6H_ispc( (ispc::rgba_surface*)InputSurface, OutputBlocks, (ispc::bc6h_enc_settings*)EncSettings );
 }
@@ -561,19 +557,15 @@ void KTexCompBC6HCompressRGBA16F( const ISPCTC_Surface_RGBA16F* InputSurface, ui
 //
 // BC7 entry points into ispc  code.
 //
-void CompressBlocksBC7( const rgba_surface* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings )
-{
-	KTexCompBC7CompressRGBA8( (const ISPCTC_Surface_RGBA8*)InputSurface, OutputBlocks, EncSettings);
-}
-void KTexCompBC7CompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings )
+void BC7CompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings )
 {
 	ispc::BC7_Compress_RGBA8( (ispc::Surface_RGBA8*)InputSurface, OutputBlocks, (ispc::bc7_enc_settings*)EncSettings );
 }
-void KTexCompBC7CompressRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings )
+void BC7CompressRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings )
 {
 	ispc::BC7_Compress_RGBA16( (ispc::Surface_RGBA16*)InputSurface, OutputBlocks, (ispc::bc7_enc_settings*)EncSettings );
 }
-//void KTexCompBC7CompressRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
+//void BC7CompressRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, bc7_enc_settings* EncSettings );
 //{
 //	ispc::BC7_Compress_RGBA32F( (ispc::Surface_RGBA32F*)InputSurface, OutputBlocks, (ispc::bc7_enc_settings*)EncSettings );
 //}
