@@ -301,15 +301,14 @@ inline uint32 fix_qbits(uint32 qbits)
 ///////////////////////////////////////////////////////////
 // Low level per block handling
 //
-
-inline void CompressBlockBC1_core(float block[48], uint32 data[2])
+inline void CompressBlockBC1_core( float BlockInput[48], uint32 BlockOutput[2], bool AllowSecondaryMode )
 {
 	uniform const int powerIterations = 4;
 	uniform const int refineIterations = 1;
     
 	float covar[6];
 	float dc[3];
-	compute_covar_dc_ugly(covar, dc, block);
+	compute_covar_dc_ugly(covar, dc, BlockInput);
 	
 	float eps = 0.001;
 	covar[0] += eps;
@@ -321,7 +320,7 @@ inline void CompressBlockBC1_core(float block[48], uint32 data[2])
 		
 	float c0[3];
 	float c1[3];
-	pick_endpoints(c0, c1, block, axis, dc);
+	pick_endpoints(c0, c1, BlockInput, axis, dc);
 	
 	int p[2];
 	p[0] = enc_rgb565(c0);
@@ -329,20 +328,20 @@ inline void CompressBlockBC1_core(float block[48], uint32 data[2])
 	if (p[0]<p[1])
 		swap_ints(&p[0], &p[1], 1);
 	
-	data[0] = (1<<16)*p[1]+p[0];
-	data[1] = fast_quant(block, p[0], p[1]);
+	BlockOutput[0] = (1<<16)*p[1]+p[0];
+	BlockOutput[1] = fast_quant(BlockInput, p[0], p[1]);
     	
 	// refine
 	for (uniform int i=0; i<refineIterations; i++)
 	{
-		bc1_refine(p, block, data[1], dc);
+		bc1_refine(p, BlockInput, BlockOutput[1], dc);
 		if (p[0]<p[1])
 			swap_ints(&p[0], &p[1], 1);
-		data[0] = (1<<16)*p[1]+p[0];
-		data[1] = fast_quant(block, p[0], p[1]);
+		BlockOutput[0] = (1<<16)*p[1]+p[0];
+		BlockOutput[1] = fast_quant(BlockInput, p[0], p[1]);
 	}
 	
-	data[1] = fix_qbits(data[1]);
+	BlockOutput[1] = fix_qbits(BlockOutput[1]);
 }
 
 ///////////////////////////////////////////////////////////
@@ -482,19 +481,25 @@ inline void CompressBlockBC3_alpha( float AlphaInput[16], uint32 AlphaOutput[2] 
 
 inline void CompressBlockBC1( float BlockInput[48], uint32 BlockOutput[2] )
 {
-	CompressBlockBC1_core( BlockInput, BlockOutput );
+	CompressBlockBC1_core( BlockInput, BlockOutput, false );
+}
+
+// !! I'm using this for secondary mode testing for now.
+inline void CompressBlockBC1PA( float BlockInput[48], uint32 BlockOutput[2] )
+{
+	CompressBlockBC1_core ( &BlockInput[ 0], &BlockOutput[2], true );
 }
 
 inline void CompressBlockBC2( float BlockInput[64], uint32 BlockOutput[4] )
 {
 	QuantizeBlockBC2_alpha( &BlockInput[48], &BlockOutput[0] );
-	CompressBlockBC1_core ( &BlockInput[ 0], &BlockOutput[2] );
+	CompressBlockBC1_core ( &BlockInput[ 0], &BlockOutput[2], false );
 }
 
 inline void CompressBlockBC3( float BlockInput[64], uint32 BlockOutput[4] )
 {
 	CompressBlockBC3_alpha( &BlockInput[48], &BlockOutput[0] );
-	CompressBlockBC1_core ( &BlockInput[ 0], &BlockOutput[2] );
+	CompressBlockBC1_core ( &BlockInput[ 0], &BlockOutput[2], false );
 }
 
 inline void CompressBlockBC4( float BlockInput[16], uint32 BlockOutput[2] )
@@ -516,197 +521,46 @@ inline void CompressBlockBC5( float BlockInput[32], uint32 BlockOutput[4] )
 // Are there function pointers available in ispc?
 // 
 
+#define COMPRESSION_ENTRY_POINT(export_name,compress_routine,surface_type,load_routine,num_floats,num_block_dwords) \
+	export void export_name( uniform surface_type InputSurface[], uniform uint8 OutputBlocks[] ) \
+	{	\
+		uniform int NumHorizontalBlocks = InputSurface->Width/4; \
+		uniform int NumVerticalBlocks   = InputSurface->Height/4; \
+		 \
+		for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ ) \
+		{ \
+			foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks ) \
+			{ \
+				float BlockInput[num_floats]; \
+				uint32 BlockOutput[num_block_dwords]; \
+				 \
+				load_routine( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex ); \
+				compress_routine( BlockInput, BlockOutput ); \
+				StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, num_block_dwords ); \
+			} \
+		} \
+	}
+
 // BC1.
-inline void LoadCompressStoreBlockBC1_RGBA8( uniform Surface_RGBA8 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[48];
-	uint32 BlockOutput[2];
+COMPRESSION_ENTRY_POINT(BC1CompressRGBA8,CompressBlockBC1,Surface_RGBA8,LoadUncompressed4x4BlockInterleavedNoAlpha_RGBA8,48,2)
+COMPRESSION_ENTRY_POINT(BC1CompressRGBA16,CompressBlockBC1,Surface_RGBA16,LoadUncompressed4x4BlockInterleavedNoAlpha_RGBA16,48,2)
 
-	LoadUncompressed4x4BlockInterleavedNoAlpha_RGBA8( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC1( BlockInput, BlockOutput );
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 2 );
-}
-inline void LoadCompressStoreBlockBC1_RGBA16( uniform Surface_RGBA16 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[48];
-	uint32 BlockOutput[2];
-
-	LoadUncompressed4x4BlockInterleavedNoAlpha_RGBA16( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC1( BlockInput, BlockOutput);
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 2 );
-}
-
-export void BC1_Compress_RGBA8( uniform Surface_RGBA8 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC1_RGBA8( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
-export void BC1_Compress_RGBA16( uniform Surface_RGBA16 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC1_RGBA16( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
+// BC1 PA.
+COMPRESSION_ENTRY_POINT(BC1PACompressRGBA8,CompressBlockBC1PA,Surface_RGBA8,LoadUncompressed4x4BlockInterleavedNoAlpha_RGBA8,48,2)
+COMPRESSION_ENTRY_POINT(BC1PACompressRGBA16,CompressBlockBC1PA,Surface_RGBA16,LoadUncompressed4x4BlockInterleavedNoAlpha_RGBA16,48,2)
 
 // BC2.
-inline void LoadCompressStoreBlockBC2_RGBA8( uniform Surface_RGBA8 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[64];
-	uint32 BlockOutput[4];
-
-	LoadUncompressed4x4BlockInterleaved_RGBA8( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC2( BlockInput, BlockOutput );
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 4 );
-}
-inline void LoadCompressStoreBlockBC2_RGBA16( uniform Surface_RGBA16 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[64];
-	uint32 BlockOutput[4];
-
-	LoadUncompressed4x4BlockInterleaved_RGBA16( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC2( BlockInput, BlockOutput);
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 4 );
-}
-
-export void BC2_Compress_RGBA8( uniform Surface_RGBA8 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC2_RGBA8( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
-export void BC2_Compress_RGBA16( uniform Surface_RGBA16 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC2_RGBA16( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
+COMPRESSION_ENTRY_POINT(BC2CompressRGBA8,CompressBlockBC2,Surface_RGBA8,LoadUncompressed4x4BlockInterleaved_RGBA8,64,4)
+COMPRESSION_ENTRY_POINT(BC2CompressRGBA16,CompressBlockBC2,Surface_RGBA16,LoadUncompressed4x4BlockInterleaved_RGBA16,64,4)
 
 // BC3.
-inline void LoadCompressStoreBlockBC3_RGBA8( uniform Surface_RGBA8 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[64];
-	uint32 BlockOutput[4];
-
-	LoadUncompressed4x4BlockInterleaved_RGBA8( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC3( BlockInput, BlockOutput );
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 4 );
-}
-inline void LoadCompressStoreBlockBC3_RGBA16( uniform Surface_RGBA16 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[64];
-	uint32 BlockOutput[4];
-
-	LoadUncompressed4x4BlockInterleaved_RGBA16( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC3( BlockInput, BlockOutput);
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 4 );
-}
-
-export void BC3_Compress_RGBA8( uniform Surface_RGBA8 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC3_RGBA8( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
-export void BC3_Compress_RGBA16( uniform Surface_RGBA16 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC3_RGBA16( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
+COMPRESSION_ENTRY_POINT(BC3CompressRGBA8,CompressBlockBC3,Surface_RGBA8,LoadUncompressed4x4BlockInterleaved_RGBA8,64,4)
+COMPRESSION_ENTRY_POINT(BC3CompressRGBA16,CompressBlockBC3,Surface_RGBA16,LoadUncompressed4x4BlockInterleaved_RGBA16,64,4)
 
 // BC4.
-inline void LoadCompressStoreBlockBC4_R8( uniform Surface_R8 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[16];
-	uint32 BlockOutput[2];
-
-	LoadUncompressed4x4Block_R8( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC4( BlockInput, BlockOutput );
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 2 );
-}
-inline void LoadCompressStoreBlockBC4_R16( uniform Surface_R16 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[16];
-	uint32 BlockOutput[2];
-
-	LoadUncompressed4x4Block_R16( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC4( BlockInput, BlockOutput );
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 2 );
-}
-
-export void BC4_Compress_R8( uniform Surface_R8 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC4_R8( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
-export void BC4_Compress_R16( uniform Surface_R16 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC4_R16( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
+COMPRESSION_ENTRY_POINT(BC4CompressR8,CompressBlockBC4,Surface_R8,LoadUncompressed4x4Block_R8,16,2)
+COMPRESSION_ENTRY_POINT(BC4CompressR16,CompressBlockBC4,Surface_R16,LoadUncompressed4x4Block_R16,16,2)
 
 // BC5.
-inline void LoadCompressStoreBlockBC5_RG8( uniform Surface_RG8 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[32];
-	uint32 BlockOutput[2];
-
-	LoadUncompressed4x4BlockInterleaved_RG8( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC5( BlockInput, BlockOutput );
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 4 );
-}
-inline void LoadCompressStoreBlockBC5_RG16( uniform Surface_RG16 InputSurface[], int HorizontalBlockIndex, uniform int VerticalBlockIndex, uniform uint8 OutputBlocks[] )
-{
-	float BlockInput[32];
-	uint32 BlockOutput[2];
-
-	LoadUncompressed4x4BlockInterleaved_RG16( BlockInput, InputSurface, HorizontalBlockIndex, VerticalBlockIndex );
-	CompressBlockBC5( BlockInput, BlockOutput );
-	StoreCompressedBlock( OutputBlocks, InputSurface->Width, HorizontalBlockIndex, VerticalBlockIndex, BlockOutput, 4 );
-}
-
-export void BC5_Compress_RG8( uniform Surface_RG8 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC5_RG8( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
-export void BC5_Compress_RG16( uniform Surface_RG16 InputSurface[], uniform uint8 OutputBlocks[] )
-{	
-	uniform int NumHorizontalBlocks = InputSurface->Width/4;
-	uniform int NumVerticalBlocks   = InputSurface->Height/4;
-
-	for ( uniform int VerticalBlockIndex=0; VerticalBlockIndex<NumVerticalBlocks; VerticalBlockIndex++ )
-		foreach ( HorizontalBlockIndex=0...NumHorizontalBlocks )
-			LoadCompressStoreBlockBC5_RG16( InputSurface, HorizontalBlockIndex, VerticalBlockIndex, OutputBlocks );
-}
+COMPRESSION_ENTRY_POINT(BC5CompressRG8,CompressBlockBC5,Surface_RG8,LoadUncompressed4x4BlockInterleaved_RG8,32,4)
+COMPRESSION_ENTRY_POINT(BC5CompressRG16,CompressBlockBC5,Surface_RG16,LoadUncompressed4x4BlockInterleaved_RG16,32,4)

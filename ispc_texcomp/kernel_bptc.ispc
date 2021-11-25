@@ -41,6 +41,7 @@ struct bc7_enc_settings
 	int refineIterations_channel;
 
 	int channels;
+	bool IgnoreAlphaError;
 };
 
 struct bc7_enc_state
@@ -64,6 +65,7 @@ struct bc7_enc_state
 	uniform int refineIterations_channel;
 
 	uniform int channels;
+	uniform bool IgnoreAlphaError;
 };
 
 struct mode45_parameters
@@ -785,13 +787,18 @@ void bc7_enc_mode01237(bc7_enc_state state[], uniform int mode, int part_list[],
 
 		if (err<best_err)
 		{
-			for (uniform int i=0; i<8*pairs; i++) best_qep[i] = qep[i];
-				for (uniform int k=0; k<2; k++) best_qblock[k] = qblock[k];
-					best_err = err;
+			for (uniform int i=0; i<8*pairs; i++)
+				best_qep[i] = qep[i];
+
+			for (uniform int k=0; k<2; k++)
+				best_qblock[k] = qblock[k];
+
+			best_err = err;
 		}
 	}
-    
-	if (mode != 7) // !! This doesn't look right.
+
+	// Modes 0, 1, 2 and 3 force alpha to 255, so alpha error can be precalculated.
+	if ( mode!=7 && !state->IgnoreAlphaError )
 		best_err += state->opaque_err; // take into account alpha channel
 
 	if (best_err<state->best_err)
@@ -1035,6 +1042,7 @@ float opt_channel(bc7_enc_state state[], uint32 qblock[2], int qep[2], float blo
 	return err;
 }
 
+// doswap == Mode 4 Index selection bit?. Rotation=0 swap red, differs from in file encoding. 4=no rotation.
 void bc7_enc_mode45_candidate(bc7_enc_state state[], mode45_parameters best_candidate[], float best_err[], uniform int mode, uniform int rotation, uniform int doswap)
 {
 	uniform int bits = 2; 
@@ -1050,13 +1058,13 @@ void bc7_enc_mode45_candidate(bc7_enc_state state[], mode45_parameters best_cand
 		abits = 2;
 	}
 
-	float block[48];
+	float block[48]; // !! Why doesn't this have alpha..
 	for (uniform int k=0; k<16; k++)
 	{
 		for (uniform int p=0; p<3; p++)
-		block[k+p*16] = state->block[k+p*16];
+			block[k+p*16] = state->block[k+p*16];
 
-		if (rotation < 3)
+		if (rotation < 3) // !! Like wtf?
 		{
 			// apply channel rotation
 			if (state->channels == 4)
@@ -1065,7 +1073,7 @@ void bc7_enc_mode45_candidate(bc7_enc_state state[], mode45_parameters best_cand
 				block[k+rotation*16] = 255;
 		}
 	}
-	
+
 	float ep[8];
 	block_segment(ep, block, -1, 3);
 
@@ -1116,10 +1124,10 @@ void bc7_enc_mode45( bc7_enc_state State[] )
 	// Mode 4.
 	if ( State->ModeEnabled[4] )
 	{
-		for ( uniform int p=channel0; p<State->channels; p++ )
+		for ( uniform int Rotation=channel0; Rotation<State->channels; Rotation++ ) // !! Does <channels even make sense?
 		{
-			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 4, p, 0 );
-			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 4, p, 1 );
+			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 4, Rotation, 0 );
+			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 4, Rotation, 1 );
 		}
 
 		if ( best_err<State->best_err )
@@ -1132,8 +1140,8 @@ void bc7_enc_mode45( bc7_enc_state State[] )
 	// Mode 5.
 	if ( State->ModeEnabled[5] )
 	{
-		for ( uniform int p=channel0; p<State->channels; p++ )
-			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 5, p, 0 );
+		for ( uniform int Rotation=channel0; Rotation<State->channels; Rotation++ )
+			bc7_enc_mode45_candidate( State, &best_candidate, &best_err, 5, Rotation, 0 );
 
 		if ( best_err<State->best_err )
 		{
@@ -1482,7 +1490,8 @@ void bc7_code_mode6(uint32 data[5], int qep[8], uint32 qblock[2])
 // Returns false if no mode is enabled.
 uniform bool CopyAndSanitizeEncodingSettingsBC7( bc7_enc_state EncState[], uniform bc7_enc_settings EncSettings[] )
 {
-	EncState->channels = EncSettings->channels;
+	EncState->IgnoreAlphaError = EncSettings->IgnoreAlphaError;
+	EncState->channels         = EncSettings->channels;
 
 	uniform int NumEnabledModes = 0;
 	for ( uniform int Mode=0; Mode<8; Mode++ )
@@ -1533,7 +1542,7 @@ inline void CompressBlockBC7( bc7_enc_state EncState[], uniform bc7_enc_settings
 	}
 
 	EncState->best_err   = 1e99;
-	EncState->opaque_err = compute_opaque_err( EncState->block, EncState->channels );
+	EncState->opaque_err = EncState->IgnoreAlphaError ? 0.0 : compute_opaque_err( EncState->block, EncState->channels );
 
 	bc7_enc_mode02( EncState );
 	bc7_enc_mode13( EncState );
