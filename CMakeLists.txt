@@ -76,6 +76,10 @@ if (NOT EXISTS ${ISPC_COMPILER})
                       "Please grab the latest compiler for your platform at https://github.com/ispc/ispc and try again")
 endif()
 
+if(UNIX)
+	execute_process(COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/ispc_texcomp)
+endif()
+
 foreach(KERNEL 
   "ispc_texcomp/kernel"
   "ispc_texcomp/kernel_astc"
@@ -86,11 +90,14 @@ foreach(KERNEL
   list(APPEND OBJECTS ${OBJECT})
   set(PLATFORM_OBJECTS "")
 
-  foreach(PLATFORM_EXT ${ISPC_PLATFORM_EXTS})
-    set(PLATFORM_OBJECT "${KERNEL}_${PLATFORM_EXT}.${OBJECT_EXT}")
-    list(APPEND PLATFORM_OBJECTS ${PLATFORM_OBJECT})
-    list(APPEND ALL_PLATFORM_OBJECTS ${PLATFORM_OBJECT})
-  endforeach()
+  string(FIND "${ISPC_PLATFORM_EXTS}" ";" TMP)
+  if (${TMP} GREATER 1)
+    foreach(PLATFORM_EXT ${ISPC_PLATFORM_EXTS})
+      set(PLATFORM_OBJECT "${KERNEL}_${PLATFORM_EXT}.${OBJECT_EXT}")
+      list(APPEND PLATFORM_OBJECTS ${PLATFORM_OBJECT})
+      list(APPEND ALL_PLATFORM_OBJECTS ${PLATFORM_OBJECT})
+    endforeach()
+  endif()
   
   add_custom_command(
     OUTPUT ${OBJECT} ${PLATFORM_OBJECTS}
