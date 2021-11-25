@@ -104,17 +104,19 @@ include_directories(
 )
 
 set(SOURCES
-  ispc_texcomp/ispc_texcomp.cpp
-  ispc_texcomp/ispc_texcomp_astc.cpp
-  ispc_texcomp/KTexCompBPTC.cpp
+  ispc_texcomp/ASTC.cpp
+  ispc_texcomp/BPTC.cpp
+  ispc_texcomp/S3TC.cpp
+  ispc_texcomp/ETC.cpp
+  ispc_texcomp/BC.cpp    
 )
 
-add_library(ispc_texcomp
+add_library(KTexComp
   STATIC
   ${ALL_PLATFORM_OBJECTS}
   ${SOURCES}
 )
 
-install(TARGETS ispc_texcomp
+install(TARGETS KTexComp
   LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
 )
