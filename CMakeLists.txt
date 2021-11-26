@@ -97,8 +97,10 @@ foreach(KERNEL
       list(APPEND PLATFORM_OBJECTS ${PLATFORM_OBJECT})
       list(APPEND ALL_PLATFORM_OBJECTS ${PLATFORM_OBJECT})
     endforeach()
+  else()
+    list(APPEND ALL_PLATFORM_OBJECTS ${OBJECT})
   endif()
-  
+
   add_custom_command(
     OUTPUT ${OBJECT} ${PLATFORM_OBJECTS}
 	COMMAND ${ISPC_COMPILER} -O2 "${KERNEL}.ispc" -o "${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}.${OBJECT_EXT}" -h "${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}_ispc.h" --arch=${ISPC_ARCH} --target=${ISPC_TARGET} --opt=fast-math
