@@ -89,6 +89,7 @@ foreach(KERNEL
   set(OBJECT "${KERNEL}.${OBJECT_EXT}")
   list(APPEND OBJECTS ${OBJECT})
   set(PLATFORM_OBJECTS "")
+  list(APPEND PUBLIC_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/${KERNEL}_ispc.h")
 
   string(FIND "${ISPC_PLATFORM_EXTS}" ";" TMP)
   if (${TMP} GREATER 1)
@@ -126,6 +127,12 @@ add_library(KTexComp
   ${SOURCES}
 )
 
+set_target_properties(KTexComp
+  PROPERTIES
+  PUBLIC_HEADER "${PUBLIC_HEADERS};ispc_texcomp/BC.h"
+)
+
 install(TARGETS KTexComp
   LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
+  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
