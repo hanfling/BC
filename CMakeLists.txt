@@ -98,9 +98,9 @@ foreach(KERNEL
       list(APPEND PLATFORM_OBJECTS ${PLATFORM_OBJECT})
       list(APPEND ALL_PLATFORM_OBJECTS ${PLATFORM_OBJECT})
     endforeach()
-  else()
-    list(APPEND ALL_PLATFORM_OBJECTS ${OBJECT})
   endif()
+
+  list(APPEND ALL_PLATFORM_OBJECTS ${OBJECT})
 
   add_custom_command(
     OUTPUT ${OBJECT} ${PLATFORM_OBJECTS}
