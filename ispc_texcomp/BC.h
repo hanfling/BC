@@ -128,7 +128,7 @@ void BC4EncodeR16( const ISPCTC_Surface_R16* InputSurface, uint8_t* OutputBlocks
 //void BC4EncodeR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
 //void BC4SEncodeR8S( const ISPCTC_Surface_R8S* InputSurface, uint8_t* OutputBlocks );
 //void BC4SEncodeR16S( const ISPCTC_Surface_R16S* InputSurface, uint8_t* OutputBlocks );
-//void BC4SEncodeSR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
+//void BC4SEncodeR32F( const ISPCTC_Surface_R32F* InputSurface, uint8_t* OutputBlocks );
 
 // BC5.
 void BC5EncodeRG8( const ISPCTC_Surface_RG8* InputSurface, uint8_t* OutputBlocks );
