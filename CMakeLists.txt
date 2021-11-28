@@ -73,7 +73,11 @@ endif()
 
 if (NOT EXISTS ${ISPC_COMPILER})
   message(FATAL_ERROR "Could not find ispc compiler: ${ISPC_COMPILER}\n"
-                      "Please grab the latest compiler for your platform at https://github.com/ispc/ispc and try again")
+                      "Please grab the latest compiler for your platform at\n"
+                      "https://github.com/ispc/ispc and try again\n"
+					  "If you are an OldUnreal developer, you can also type\n"
+					  "git clone git@github.com:OldUnreal/ispc-compiler ispc\n"
+					  "in KTexComp's root folder")
 endif()
 
 if(UNIX)
