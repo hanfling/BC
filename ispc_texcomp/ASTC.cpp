@@ -510,7 +510,7 @@ void astc_encode(const rgba_surface* src, float* block_scores, uint8_t* dst, uin
 }
 
 // ASTC.
-void ASTCCompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings )
+void ASTCEncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings )
 {
 	assert(InputSurface->Height % EncSettings->block_height == 0);
 	assert(InputSurface->Width % EncSettings->block_width == 0);
@@ -581,8 +581,8 @@ void ASTCCompressRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* Outpu
 		memset(mode_list, 0, list_size * sizeof(uint64_t));
 	}
 }
-//void ASTCCompressRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
-//void ASTCCompressRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+//void ASTCEncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
+//void ASTCEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks, astc_enc_settings* EncSettings );
 
 //
 // The End.
