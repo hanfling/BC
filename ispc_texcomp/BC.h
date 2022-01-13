@@ -101,12 +101,12 @@ ISPCTC_DELARE_SURFACE(ISPCTC_Surface_RGBA32F)
 // BC1-BC5.
 //
 
-// BC1.
+// BC1 (GL_COMPRESSED_RGB_S3TC_DXT1_EXT or DXGI_FORMAT_BC1_UNORM with alpha force to 1.0).
 void BC1EncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
 void BC1EncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
 //void BC1EncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );
 
-// BC1 Punchthrough Alpha.
+// BC1 Punchthrough Alpha (GL_COMPRESSED_RGBA_S3TC_DXT1_EXT or D3D DXGI_FORMAT_BC1_UNORM).
 void BC1PAEncodeRGBA8( const ISPCTC_Surface_RGBA8* InputSurface, uint8_t* OutputBlocks );
 void BC1PAEncodeRGBA16( const ISPCTC_Surface_RGBA16* InputSurface, uint8_t* OutputBlocks );
 //void BC1PAEncodeRGBA32F( const ISPCTC_Surface_RGBA32F* InputSurface, uint8_t* OutputBlocks );

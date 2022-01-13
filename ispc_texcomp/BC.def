@@ -24,21 +24,21 @@ EXPORTS
 	GetProfile_astc_alpha_fast
 	GetProfile_astc_alpha_slow
 	ReplicateBorders
-	BC1CompressRGBA8
-	BC1CompressRGBA16
-	BC1PACompressRGBA8
-	BC1PACompressRGBA16
-	BC2CompressRGBA8
-	BC2CompressRGBA16
-	BC3CompressRGBA8
-	BC3CompressRGBA16
-	BC4CompressR8
-	BC4CompressR16
-	BC5CompressRG8
-	BC5CompressRG16
-	BC6HCompressRGBA16F
-	BC7CompressRGBA8
-	BC7CompressRGBA16
-	ETC1CompressRGBA8
-	ETC1CompressRGBA16
-	ASTCCompressRGBA8
+	BC1EncodeRGBA8
+	BC1EncodeRGBA16
+	BC1PAEncodeRGBA8
+	BC1PAEncodeRGBA16
+	BC2EncodeRGBA8
+	BC2EncodeRGBA16
+	BC3EncodeRGBA8
+	BC3EncodeRGBA16
+	BC4EncodeR8
+	BC4EncodeR16
+	BC5EncodeRG8
+	BC5EncodeRG16
+	BC6HEncodeRGBA16F
+	BC7EncodeRGBA8
+	BC7EncodeRGBA16
+	ETC1EncodeRGBA8
+	ETC1EncodeRGBA16
+	ASTCEncodeRGBA8
