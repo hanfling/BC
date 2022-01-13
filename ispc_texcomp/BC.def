@@ -1,4 +1,4 @@
-LIBRARY   ispc_texcomp
+LIBRARY BC
 EXPORTS
 	GetProfile_ultrafast
 	GetProfile_veryfast
